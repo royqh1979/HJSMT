@@ -1,0 +1,4 @@
+1. 该工程的作用是：画甘特图。
+
+	Input: worktable， timetable， solution， maxmachine
+	Output: 甘特图。
