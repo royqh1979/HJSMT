@@ -9,7 +9,7 @@ public class Test {
 
         String problem = "ft20";
         /**
-         *  fix[i,j] ¼´µÚi,jºÅ¹¤ÐòÐèÒªµÄ»úÆ÷±àºÅ£¨»úÆ÷±àºÅ´Ó1¿ªÊ¼£©
+         *  fix[i,j] å³ç¬¬i,jå·å·¥åºéœ€è¦çš„æœºå™¨ç¼–å·ï¼ˆæœºå™¨ç¼–å·ä»Ž1å¼€å§‹ï¼‰
          */
         String[][] worktable = new String[][]{
                 {"8;10;14;16", "4;6;14;18", "24", "5", "1;18;21;25"},
@@ -34,7 +34,7 @@ public class Test {
                 {"22", "3;5;18;19;20", "8", "19;21", "2;8;10;16;25"}
         };
         /**
-         * p(i,j)£¬¼´µÚi,jºÅ¹¤ÐòËùÐèµÄ¹¤ÆÚ£¨duration)
+         * p(i,j)ï¼Œå³ç¬¬i,jå·å·¥åºæ‰€éœ€çš„å·¥æœŸï¼ˆduration)
          */
         int[][] timetable = new int[][]{
                 {50, 15, 10, 79, 34},
@@ -59,16 +59,16 @@ public class Test {
                 {77, 30, 51, 80, 15}
         };
         /**
-         * »úÆ÷ÊýÁ¿£¨×¢ÒâÆäÔÚworktableÖÐ´Ó1¿ªÊ¼±àºÅ£©
+         * æœºå™¨æ•°é‡ï¼ˆæ³¨æ„å…¶åœ¨worktableä¸­ä»Ž1å¼€å§‹ç¼–å·ï¼‰
          */
         int maxmachine = 25;
 
         /**
-         * ÖÖÈºÊýÁ¿
+         * ç§ç¾¤æ•°é‡
          */
         int PopSize = 40;
         /**
-         * µü´ú´ÎÊý
+         * è¿­ä»£æ¬¡æ•°
          */
         int num_iteration = 100;
 

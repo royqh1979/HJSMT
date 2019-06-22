@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * ¼ÆËãÊÊÓ¦¶ÈµÄÀà
+ * è®¡ç®—é€‚åº”åº¦çš„ç±»
  */
 public class FitnessCalculator{
     //Basic information.
@@ -15,7 +15,7 @@ public class FitnessCalculator{
     private int n; //number of operation per job.
 
     /**
-     *  °Ñ»úÆ÷µÄÕ¼ÓÃÉè³É0-1ÏòÁ¿£ºÀıÈç(1,0,1,0,0)£¬±íÊ¾Ö»Õ¼ÓÃ1ºÍ3»úÆ÷
+     *  æŠŠæœºå™¨çš„å ç”¨è®¾æˆ0-1å‘é‡ï¼šä¾‹å¦‚(1,0,1,0,0)ï¼Œè¡¨ç¤ºåªå ç”¨1å’Œ3æœºå™¨
      * @param worktable
      */
     private void parseWorktable(String[][] worktable) {
@@ -26,8 +26,8 @@ public class FitnessCalculator{
                 machinetable[i][j]=new HashSet<>();
                 String[] p_splited;
                 String demand=worktable[i][j];
-                //°Ñ»úÆ÷µÄÕ¼ÓÃÉè³É0-1ÏòÁ¿£ºÀıÈç(1,0,1,0,0)£¬±íÊ¾Ö»Õ¼ÓÃ1ºÍ3»úÆ÷
-                //½âÎödemand,¿´¿´ĞèÒªÄÄ¼¸Ì¨»úÆ÷
+                //æŠŠæœºå™¨çš„å ç”¨è®¾æˆ0-1å‘é‡ï¼šä¾‹å¦‚(1,0,1,0,0)ï¼Œè¡¨ç¤ºåªå ç”¨1å’Œ3æœºå™¨
+                //è§£ædemand,çœ‹çœ‹éœ€è¦å“ªå‡ å°æœºå™¨
                 p_splited = demand.split(";");
                 for(String s:p_splited){
                     int machine_id = Integer.parseInt(s)-1;
@@ -46,16 +46,16 @@ public class FitnessCalculator{
         n = worktable[0].length;
     }
     /**
-     * ¼ÆËãÊÊÓ¦Öµ
+     * è®¡ç®—é€‚åº”å€¼
      * @param jobs
      * @return
      */
     public int fitness(int[] jobs) {
-        // TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+        // TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
         Set<Integer> demand;
         int time; //processing time
         /**
-         * Ã¿Ì¨machineµÄµÄÒÑÕ¼ÓÃÊ±¼ä
+         * æ¯å°machineçš„çš„å·²å ç”¨æ—¶é—´
          */
         int[] currentMachineTime = new int[maxmachine];
 
@@ -64,19 +64,19 @@ public class FitnessCalculator{
          */
         int[] currentJobTime = new int[m];
 
-        //ÕÒ³öÃ¿¸öÔªËØ¶ÔÓ¦µÄÒÑÖªÁ¿£ºĞèÒª ÄÄ¼¸ÖÖ´¦Àí»ú ºÍ ÏàÓ¦µÄÊ±¼ä¡£
+        //æ‰¾å‡ºæ¯ä¸ªå…ƒç´ å¯¹åº”çš„å·²çŸ¥é‡ï¼šéœ€è¦ å“ªå‡ ç§å¤„ç†æœº å’Œ ç›¸åº”çš„æ—¶é—´ã€‚
         //operation[j]=i: the (i-1)th operation of job (j-1).
         int[] operations = new int[m];
 
         for (int i = 0; i < m*n; i++) {
-            int job_id = jobs[i] - 1;   //ÔªËØËùÔÚ¾ØÕóµÄĞĞ£¬Ò²¾ÍÊÇ¹¤×÷µÄĞòºÅ¡£
+            int job_id = jobs[i] - 1;   //å…ƒç´ æ‰€åœ¨çŸ©é˜µçš„è¡Œï¼Œä¹Ÿå°±æ˜¯å·¥ä½œçš„åºå·ã€‚
             operations[job_id]++;
             int op_in_job = operations[job_id] - 1;
             demand = machinetable[job_id][op_in_job];
             time = timetable[job_id][op_in_job];
             updatefunction_2(job_id, demand, time, currentJobTime, currentMachineTime);
         }
-        //È¡³öºÄÊ±×î³¤µÄ¹¤×÷µÄ¹¤×÷Ê±¼ä¼´ÎªÊÊÓ¦Öµº¯ÊıµÄ·µ»ØÖµ¡£
+        //å–å‡ºè€—æ—¶æœ€é•¿çš„å·¥ä½œçš„å·¥ä½œæ—¶é—´å³ä¸ºé€‚åº”å€¼å‡½æ•°çš„è¿”å›å€¼ã€‚
         int fitness_result = currentJobTime[0];
         for (int i = 0; i < currentJobTime.length; i++) {
             if (fitness_result < currentJobTime[i]) {
@@ -94,10 +94,10 @@ public class FitnessCalculator{
             }
         }
         int endTime = startTime + duration;
-        //¸üĞÂcurrentJobTime
+        //æ›´æ–°currentJobTime
         currentJobTime[job_id] = endTime;
 
-        //ÏÂÃæµÄ´úÂëÓÃÓÚ¸üĞÂcurrentMachineTime;
+        //ä¸‹é¢çš„ä»£ç ç”¨äºæ›´æ–°currentMachineTime;
         for (int machine_id : demand) {
             currentMachineTime[machine_id] = endTime;
         }

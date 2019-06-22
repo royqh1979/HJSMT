@@ -266,7 +266,7 @@ public class PSO {
 	 * This method calls: updatefunction, vectorsMinus.
 	 */
 	public int evaluate_2(int[] jobs2){
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		int row;
 		String demand;
 		int time; //processing time
@@ -281,17 +281,17 @@ public class PSO {
 		 */
 		Current = new int[m];
 
-		//ÕÒ³öÃ¿¸öÔªËØ¶ÔÓ¦µÄÒÑÖªÁ¿£ºĞèÒª ÄÄ¼¸ÖÖ´¦Àí»ú ºÍ ÏàÓ¦µÄÊ±¼ä¡£
+		//æ‰¾å‡ºæ¯ä¸ªå…ƒç´ å¯¹åº”çš„å·²çŸ¥é‡ï¼šéœ€è¦ å“ªå‡ ç§å¤„ç†æœº å’Œ ç›¸åº”çš„æ—¶é—´ã€‚
 		//operation[j]=i: the (i-1)th operation of job (j-1).
 		int[] operations = new int[m];
 		for(int i=0; i<jobs2.length; i++){
-			row = jobs2[i];   //ÔªËØËùÔÚ¾ØÕóµÄĞĞ£¬Ò²¾ÍÊÇ¹¤×÷µÄĞòºÅ¡£
+			row = jobs2[i];   //å…ƒç´ æ‰€åœ¨çŸ©é˜µçš„è¡Œï¼Œä¹Ÿå°±æ˜¯å·¥ä½œçš„åºå·ã€‚
 			operations[row-1]++;
 			demand = worktable[row-1][operations[row-1]-1];
 			time = timetable[row-1][operations[row-1]-1];
 			updatefunction_2(row, demand, time, Current, ResourceMap);
 		}
-		//È¡³öºÄÊ±×î³¤µÄ¹¤×÷µÄ¹¤×÷Ê±¼ä¼´ÎªÊÊÓ¦Öµº¯ÊıµÄ·µ»ØÖµ¡£
+		//å–å‡ºè€—æ—¶æœ€é•¿çš„å·¥ä½œçš„å·¥ä½œæ—¶é—´å³ä¸ºé€‚åº”å€¼å‡½æ•°çš„è¿”å›å€¼ã€‚
 		int fitness_result = Current[0];
 		for(int i=0; i<Current.length;i++){
 			if(fitness_result<Current[i]){
@@ -302,14 +302,14 @@ public class PSO {
 	}
 	
 	private void updatefunction_2(int row, String demand, int time, int[] current, int[][] resourcemap) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
-		int[] demandvector = new int[maxmachine];//Ò»¸ö0-1±äÁ¿,±íÊ¾Ò»¸ö¹¤Ğò¶Ô»úÆ÷µÄÊ¹ÓÃÇé¿ö
-		int[] resourcevector = new int[maxmachine];//Ò»¸ö0-1±äÁ¿,±íÊ¾»úÆ÷×ÊÔ´µÄÊ¹ÓÃÇé¿ö
-		int further=0;//Èô²»Âú×ãÌõ¼ş£¬ÏòºóÍÆ³ÙµÄ´ÎÊı
-		int count=0;//ÓÃÓÚ¼ÇÂ¼Á¬ĞøµÄ´ÎÊı
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
+		int[] demandvector = new int[maxmachine];//ä¸€ä¸ª0-1å˜é‡,è¡¨ç¤ºä¸€ä¸ªå·¥åºå¯¹æœºå™¨çš„ä½¿ç”¨æƒ…å†µ
+		int[] resourcevector = new int[maxmachine];//ä¸€ä¸ª0-1å˜é‡,è¡¨ç¤ºæœºå™¨èµ„æºçš„ä½¿ç”¨æƒ…å†µ
+		int further=0;//è‹¥ä¸æ»¡è¶³æ¡ä»¶ï¼Œå‘åæ¨è¿Ÿçš„æ¬¡æ•°
+		int count=0;//ç”¨äºè®°å½•è¿ç»­çš„æ¬¡æ•°
 		String[] p_splited;
-		//°Ñ»úÆ÷µÄÕ¼ÓÃÉè³É0-1ÏòÁ¿£ºÀıÈç(1,0,1,0,0)£¬±íÊ¾Ö»Õ¼ÓÃ1ºÍ3»úÆ÷
-		//½âÎödemand,¿´¿´ĞèÒªÄÄ¼¸Ì¨»úÆ÷
+		//æŠŠæœºå™¨çš„å ç”¨è®¾æˆ0-1å‘é‡ï¼šä¾‹å¦‚(1,0,1,0,0)ï¼Œè¡¨ç¤ºåªå ç”¨1å’Œ3æœºå™¨
+		//è§£ædemand,çœ‹çœ‹éœ€è¦å“ªå‡ å°æœºå™¨
 		p_splited = demand.split(";");
 		for(int j=0 ;j<p_splited.length; j++){
 			int index = Integer.parseInt(p_splited[j]);
@@ -317,22 +317,22 @@ public class PSO {
 		}
 		
 		for(int i=0; count < time; i++){
-			//ÌáÈ¡¸ÃÊ±¿ÌµÄ»úÆ÷ÓàÁ¿
+			//æå–è¯¥æ—¶åˆ»çš„æœºå™¨ä½™é‡
 			for(int y=0;y<maxmachine;y++){
 				resourcevector[y] = resourcemap[y][current[row-1]+i];
 			}
-			if(vectorsMinus_2(resourcevector,demandvector)){//Èç¹ûÕâ¸öÊ±ºòµÄÓàÁ¿×ã¹»¡£
+			if(vectorsMinus_2(resourcevector,demandvector)){//å¦‚æœè¿™ä¸ªæ—¶å€™çš„ä½™é‡è¶³å¤Ÿã€‚
 				count++;
-			}else{      //Èç¹ûÄ³Ò»Ê±¿ÌÓàÁ¿²»¹»£¬ÔòÑÓ³¤Ò»¸öµ¥Î»µÄËÑË÷·¶Î§¡£
-				if(count!=0){   //²»ÁË¶ªÊ§ĞÅÏ¢
+			}else{      //å¦‚æœæŸä¸€æ—¶åˆ»ä½™é‡ä¸å¤Ÿï¼Œåˆ™å»¶é•¿ä¸€ä¸ªå•ä½çš„æœç´¢èŒƒå›´ã€‚
+				if(count!=0){   //ä¸äº†ä¸¢å¤±ä¿¡æ¯
 					further = count + further;
 				}
-				count=0;//´ò¶ÏÁ¬Ğø´ÓĞÂ¿ªÊ¼¼ÆÊı¡£
+				count=0;//æ‰“æ–­è¿ç»­ä»æ–°å¼€å§‹è®¡æ•°ã€‚
 				further++;
 			}
 		}
 
-		//ÏÂÃæµÄ´úÂëÓÃÓÚ¸üĞÂresourcemap
+		//ä¸‹é¢çš„ä»£ç ç”¨äºæ›´æ–°resourcemap
 		for(int j = current[row-1]+further; j<current[row-1]+further+time; j++){
 			for(int k=0; k<maxmachine; k++){
 				if(demandvector[k]!=0){
@@ -342,7 +342,7 @@ public class PSO {
 		}
 		ResourceMap = resourcemap;
 		
-		//ÏÂÃæµÄ´úÂëÓÃÓÚ¸üĞÂcurrent[]
+		//ä¸‹é¢çš„ä»£ç ç”¨äºæ›´æ–°current[]
 		current[row-1]= current[row-1]+time+further;
 		Current = current;
 	}
@@ -374,21 +374,21 @@ public class PSO {
 		int zerocount ;
 		int[] randomnums;
 		
-		//¶Ô¹¤×÷i½øĞĞ³õÊ¼»¯£¬iµÄÈ¡Öµ´Ó1µ½m-1£¬¹²m-1¸ö,´ú±íËùÓĞµÄ¹¤×÷¡£×îºóÒ»¸ö¹¤×÷µÄ¸³ÖµÔÚÏÂÃæ
+		//å¯¹å·¥ä½œiè¿›è¡Œåˆå§‹åŒ–ï¼Œiçš„å–å€¼ä»1åˆ°m-1ï¼Œå…±m-1ä¸ª,ä»£è¡¨æ‰€æœ‰çš„å·¥ä½œã€‚æœ€åä¸€ä¸ªå·¥ä½œçš„èµ‹å€¼åœ¨ä¸‹é¢
 		for(int i=0; i<m; i++){
 			k=0;
 			zerocount=0;
 			
 			/*
-			 * ¶ÔÓÚÃ¿¸ö¹¤×÷¶øÑÔÒª²úÉún¸öÏàÍ¬µÄÊı×Ö,Õâ¸öÊı×éÖĞµÄÊı×Öx±íÊ¾£¬ÔÚJobsÊı×éÖĞµÄµÚx¸ö0ÊµÏÖ×ª±ä¡£
-			 * È»ºóĞèÒª¶Ô¸ÃÊı×éÖĞµÄÔªËØ½øĞĞ±éÀú£¬ÒÔ±ã¶ÔJobsÖĞµÄÔªËØ½øĞĞ¸³Öµ¡£
-			 * Éú³ÉµÄËæ»úÊıµÄ×î´óÖµÓ¦¸ÃÊÇm*n,m*n-1,m*n-2,...,n¡£
+			 * å¯¹äºæ¯ä¸ªå·¥ä½œè€Œè¨€è¦äº§ç”Ÿnä¸ªç›¸åŒçš„æ•°å­—,è¿™ä¸ªæ•°ç»„ä¸­çš„æ•°å­—xè¡¨ç¤ºï¼Œåœ¨Jobsæ•°ç»„ä¸­çš„ç¬¬xä¸ª0å®ç°è½¬å˜ã€‚
+			 * ç„¶åéœ€è¦å¯¹è¯¥æ•°ç»„ä¸­çš„å…ƒç´ è¿›è¡Œéå†ï¼Œä»¥ä¾¿å¯¹Jobsä¸­çš„å…ƒç´ è¿›è¡Œèµ‹å€¼ã€‚
+			 * ç”Ÿæˆçš„éšæœºæ•°çš„æœ€å¤§å€¼åº”è¯¥æ˜¯m*n,m*n-1,m*n-2,...,nã€‚
 			 */
 			randomnums = getRandomnums(1,m*n-(i-1)*n,n);
 			
 			for(int j=0; j<p.length; j++){
 				if(p[j]==0){
-					zerocount++;   //´ú±íµÚ¼¸¸öÁã
+					zerocount++;   //ä»£è¡¨ç¬¬å‡ ä¸ªé›¶
 					if(zerocount==randomnums[k]){
 						p[j]=i;
 						k++;
@@ -400,7 +400,7 @@ public class PSO {
 			}
 		}
 		
-		//¶ÔÓÚ×îºóÒ»¸ö¹¤×÷£º
+		//å¯¹äºæœ€åä¸€ä¸ªå·¥ä½œï¼š
 		for(int t=0; t<m*n; t++){
 			if(p[t]==0){
 				p[t]=m;
@@ -424,16 +424,16 @@ public class PSO {
 		
 		for(int i=0; i<n;){  
 			state = true;  
-			int num = (int) (Math.random()*(max-min))+min;//Ëæ»úÉú³ÉÒ»¸ö[min,max]·¶Î§ÄÚµÄÊı×Ö
+			int num = (int) (Math.random()*(max-min))+min;//éšæœºç”Ÿæˆä¸€ä¸ª[min,max]èŒƒå›´å†…çš„æ•°å­—
 			for(int j=0;j<i;j++){            
-				if(num==result[j]){//°ÑÉú³ÉµÄÊı×ÖÓëÊı×éÖ®Ç°´æÔÚµÄÔªËØÒ»Ò»±È½Ï,Èç¹ûÓĞÖØ¸´
-					state=false;   //²»°ÑÕâ¸öÖØ¸´µÄÔªËØ¼ÓÈëµ½Êı×éÖĞ¡£
-					break;         //È»ºóÌø³ö£¬½øÈëÏÂÒ»´ÎÑ­»·£¬ÔÙ´ÎÉú³ÉĞÂµÄÊı×Ö
+				if(num==result[j]){//æŠŠç”Ÿæˆçš„æ•°å­—ä¸æ•°ç»„ä¹‹å‰å­˜åœ¨çš„å…ƒç´ ä¸€ä¸€æ¯”è¾ƒ,å¦‚æœæœ‰é‡å¤
+					state=false;   //ä¸æŠŠè¿™ä¸ªé‡å¤çš„å…ƒç´ åŠ å…¥åˆ°æ•°ç»„ä¸­ã€‚
+					break;         //ç„¶åè·³å‡ºï¼Œè¿›å…¥ä¸‹ä¸€æ¬¡å¾ªç¯ï¼Œå†æ¬¡ç”Ÿæˆæ–°çš„æ•°å­—
 				}
 			}
-			if(state){  //Èç¹ûÃ»ÓĞÖØ¸´
+			if(state){  //å¦‚æœæ²¡æœ‰é‡å¤
 				result[i]=num;
-				i++;     //Ö±µ½Éú³ÉÒ»¸ö²»Í¬µÄÔªËØ£¬²¢°Ñ¸ÃÔªËØ¼ÓÈëµ½Êı×éÖĞ²ÅËã½øÈëÏÂÒ»¸öÑ­»·¡£
+				i++;     //ç›´åˆ°ç”Ÿæˆä¸€ä¸ªä¸åŒçš„å…ƒç´ ï¼Œå¹¶æŠŠè¯¥å…ƒç´ åŠ å…¥åˆ°æ•°ç»„ä¸­æ‰ç®—è¿›å…¥ä¸‹ä¸€ä¸ªå¾ªç¯ã€‚
 			}
 		}
 		
@@ -442,7 +442,7 @@ public class PSO {
 	
 	//algorithm for ranking from small to big.
 	private int[] arrange(int[] array) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		int mid;
 		for(int i=0; i<array.length-1; i++){
 			for(int j=i+1;j<array.length;j++){

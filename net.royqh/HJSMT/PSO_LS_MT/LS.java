@@ -94,7 +94,7 @@ public class LS implements Callable<List<int[]>> {
 	}
 	
 	public int evaluate_2(int[] jobs2){
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		int row;
 		String demand;
 		int time; //processing time
@@ -109,17 +109,17 @@ public class LS implements Callable<List<int[]>> {
 		 */
 		Current = new int[m];
 
-		//ÕÒ³öÃ¿¸öÔªËØ¶ÔÓ¦µÄÒÑÖªÁ¿£ºĞèÒª ÄÄ¼¸ÖÖ´¦Àí»ú ºÍ ÏàÓ¦µÄÊ±¼ä¡£
+		//æ‰¾å‡ºæ¯ä¸ªå…ƒç´ å¯¹åº”çš„å·²çŸ¥é‡ï¼šéœ€è¦ å“ªå‡ ç§å¤„ç†æœº å’Œ ç›¸åº”çš„æ—¶é—´ã€‚
 		//operation[j]=i: the (i-1)th operation of job (j-1).
 		int[] operations = new int[m];
 		for(int i=0; i<jobs2.length; i++){
-			row = jobs2[i];   //ÔªËØËùÔÚ¾ØÕóµÄĞĞ£¬Ò²¾ÍÊÇ¹¤×÷µÄĞòºÅ¡£
+			row = jobs2[i];   //å…ƒç´ æ‰€åœ¨çŸ©é˜µçš„è¡Œï¼Œä¹Ÿå°±æ˜¯å·¥ä½œçš„åºå·ã€‚
 			operations[row-1]++;
 			demand = worktable[row-1][operations[row-1]-1];
 			time = timetable[row-1][operations[row-1]-1];
 			updatefunction_2(row, demand, time, Current, ResourceMap);
 		}
-		//È¡³öºÄÊ±×î³¤µÄ¹¤×÷µÄ¹¤×÷Ê±¼ä¼´ÎªÊÊÓ¦Öµº¯ÊıµÄ·µ»ØÖµ¡£
+		//å–å‡ºè€—æ—¶æœ€é•¿çš„å·¥ä½œçš„å·¥ä½œæ—¶é—´å³ä¸ºé€‚åº”å€¼å‡½æ•°çš„è¿”å›å€¼ã€‚
 		int fitness_result = Current[0];
 		for(int i=0; i<Current.length;i++){
 			if(fitness_result<Current[i]){
@@ -130,14 +130,14 @@ public class LS implements Callable<List<int[]>> {
 	}
 	
 	private void updatefunction_2(int row, String demand, int time, int[] current, int[][] resourcemap) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
-		int[] demandvector = new int[maxmachine];//Ò»¸ö0-1±äÁ¿,±íÊ¾Ò»¸ö¹¤Ğò¶Ô»úÆ÷µÄÊ¹ÓÃÇé¿ö
-		int[] resourcevector = new int[maxmachine];//Ò»¸ö0-1±äÁ¿,±íÊ¾»úÆ÷×ÊÔ´µÄÊ¹ÓÃÇé¿ö
-		int further=0;//Èô²»Âú×ãÌõ¼ş£¬ÏòºóÍÆ³ÙµÄ´ÎÊı
-		int count=0;//ÓÃÓÚ¼ÇÂ¼Á¬ĞøµÄ´ÎÊı
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
+		int[] demandvector = new int[maxmachine];//ä¸€ä¸ª0-1å˜é‡,è¡¨ç¤ºä¸€ä¸ªå·¥åºå¯¹æœºå™¨çš„ä½¿ç”¨æƒ…å†µ
+		int[] resourcevector = new int[maxmachine];//ä¸€ä¸ª0-1å˜é‡,è¡¨ç¤ºæœºå™¨èµ„æºçš„ä½¿ç”¨æƒ…å†µ
+		int further=0;//è‹¥ä¸æ»¡è¶³æ¡ä»¶ï¼Œå‘åæ¨è¿Ÿçš„æ¬¡æ•°
+		int count=0;//ç”¨äºè®°å½•è¿ç»­çš„æ¬¡æ•°
 		String[] p_splited;
-		//°Ñ»úÆ÷µÄÕ¼ÓÃÉè³É0-1ÏòÁ¿£ºÀıÈç(1,0,1,0,0)£¬±íÊ¾Ö»Õ¼ÓÃ1ºÍ3»úÆ÷
-		//½âÎödemand,¿´¿´ĞèÒªÄÄ¼¸Ì¨»úÆ÷
+		//æŠŠæœºå™¨çš„å ç”¨è®¾æˆ0-1å‘é‡ï¼šä¾‹å¦‚(1,0,1,0,0)ï¼Œè¡¨ç¤ºåªå ç”¨1å’Œ3æœºå™¨
+		//è§£ædemand,çœ‹çœ‹éœ€è¦å“ªå‡ å°æœºå™¨
 		p_splited = demand.split(";");
 		for(int j=0 ;j<p_splited.length; j++){
 			int index = Integer.parseInt(p_splited[j]);
@@ -145,22 +145,22 @@ public class LS implements Callable<List<int[]>> {
 		}
 		
 		for(int i=0; count < time; i++){
-			//ÌáÈ¡¸ÃÊ±¿ÌµÄ»úÆ÷ÓàÁ¿
+			//æå–è¯¥æ—¶åˆ»çš„æœºå™¨ä½™é‡
 			for(int y=0;y<maxmachine;y++){
 				resourcevector[y] = resourcemap[y][current[row-1]+i];
 			}
-			if(vectorsMinus_2(resourcevector,demandvector)){//Èç¹ûÕâ¸öÊ±ºòµÄÓàÁ¿×ã¹»¡£
+			if(vectorsMinus_2(resourcevector,demandvector)){//å¦‚æœè¿™ä¸ªæ—¶å€™çš„ä½™é‡è¶³å¤Ÿã€‚
 				count++;
-			}else{      //Èç¹ûÄ³Ò»Ê±¿ÌÓàÁ¿²»¹»£¬ÔòÑÓ³¤Ò»¸öµ¥Î»µÄËÑË÷·¶Î§¡£
-				if(count!=0){   //²»ÁË¶ªÊ§ĞÅÏ¢
+			}else{      //å¦‚æœæŸä¸€æ—¶åˆ»ä½™é‡ä¸å¤Ÿï¼Œåˆ™å»¶é•¿ä¸€ä¸ªå•ä½çš„æœç´¢èŒƒå›´ã€‚
+				if(count!=0){   //ä¸äº†ä¸¢å¤±ä¿¡æ¯
 					further = count + further;
 				}
-				count=0;//´ò¶ÏÁ¬Ğø´ÓĞÂ¿ªÊ¼¼ÆÊı¡£
+				count=0;//æ‰“æ–­è¿ç»­ä»æ–°å¼€å§‹è®¡æ•°ã€‚
 				further++;
 			}
 		}
 
-		//ÏÂÃæµÄ´úÂëÓÃÓÚ¸üĞÂresourcemap
+		//ä¸‹é¢çš„ä»£ç ç”¨äºæ›´æ–°resourcemap
 		for(int j = current[row-1]+further; j<current[row-1]+further+time; j++){
 			for(int k=0; k<maxmachine; k++){
 				if(demandvector[k]!=0){
@@ -170,7 +170,7 @@ public class LS implements Callable<List<int[]>> {
 		}
 		ResourceMap = resourcemap;
 		
-		//ÏÂÃæµÄ´úÂëÓÃÓÚ¸üĞÂcurrent[]
+		//ä¸‹é¢çš„ä»£ç ç”¨äºæ›´æ–°current[]
 		current[row-1]= current[row-1]+time+further;
 		Current = current;
 	}

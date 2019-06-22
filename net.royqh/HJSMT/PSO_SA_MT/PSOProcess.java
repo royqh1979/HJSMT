@@ -186,16 +186,16 @@ public class PSOProcess implements Callable<List<int[]>>{
 		
 		for(int i=0; i<n;){  
 			state = true;  
-			int num = (int) (Math.random()*(max-min+1))+min;//Ëæ»úÉú³ÉÒ»¸ö[min,max]·¶Î§ÄÚµÄÊı×Ö
+			int num = (int) (Math.random()*(max-min+1))+min;//éšæœºç”Ÿæˆä¸€ä¸ª[min,max]èŒƒå›´å†…çš„æ•°å­—
 			for(int j=0;j<i;j++){            
-				if(num==result[j]){//°ÑÉú³ÉµÄÊı×ÖÓëÊı×éÖ®Ç°´æÔÚµÄÔªËØÒ»Ò»±È½Ï,Èç¹ûÓĞÖØ¸´
-					state=false;   //²»°ÑÕâ¸öÖØ¸´µÄÔªËØ¼ÓÈëµ½Êı×éÖĞ¡£
-					break;         //È»ºóÌø³ö£¬½øÈëÏÂÒ»´ÎÑ­»·£¬ÔÙ´ÎÉú³ÉĞÂµÄÊı×Ö
+				if(num==result[j]){//æŠŠç”Ÿæˆçš„æ•°å­—ä¸æ•°ç»„ä¹‹å‰å­˜åœ¨çš„å…ƒç´ ä¸€ä¸€æ¯”è¾ƒ,å¦‚æœæœ‰é‡å¤
+					state=false;   //ä¸æŠŠè¿™ä¸ªé‡å¤çš„å…ƒç´ åŠ å…¥åˆ°æ•°ç»„ä¸­ã€‚
+					break;         //ç„¶åè·³å‡ºï¼Œè¿›å…¥ä¸‹ä¸€æ¬¡å¾ªç¯ï¼Œå†æ¬¡ç”Ÿæˆæ–°çš„æ•°å­—
 				}
 			}
-			if(state){  //Èç¹ûÃ»ÓĞÖØ¸´
+			if(state){  //å¦‚æœæ²¡æœ‰é‡å¤
 				result[i]=num;
-				i++;     //Ö±µ½Éú³ÉÒ»¸ö²»Í¬µÄÔªËØ£¬²¢°Ñ¸ÃÔªËØ¼ÓÈëµ½Êı×éÖĞ²ÅËã½øÈëÏÂÒ»¸öÑ­»·¡£
+				i++;     //ç›´åˆ°ç”Ÿæˆä¸€ä¸ªä¸åŒçš„å…ƒç´ ï¼Œå¹¶æŠŠè¯¥å…ƒç´ åŠ å…¥åˆ°æ•°ç»„ä¸­æ‰ç®—è¿›å…¥ä¸‹ä¸€ä¸ªå¾ªç¯ã€‚
 			}
 		}
 		
@@ -204,7 +204,7 @@ public class PSOProcess implements Callable<List<int[]>>{
 	
 	
 	private int[] arrange(int[] array) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		int mid;
 		for(int i=0; i<array.length-1; i++){
 			for(int j=i+1;j<array.length;j++){

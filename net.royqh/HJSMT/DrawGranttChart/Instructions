@@ -1,4 +1,4 @@
-1. ¸Ã¹¤³ÌµÄ×÷ÓÃÊÇ£º»­¸ÊÌØÍ¼¡£
+1. è¯¥å·¥ç¨‹çš„ä½œç”¨æ˜¯ï¼šç”»ç”˜ç‰¹å›¾ã€‚
 
-	Input: worktable£¬ timetable£¬ solution£¬ maxmachine
-	Output: ¸ÊÌØÍ¼¡£
+	Input: worktableï¼Œ timetableï¼Œ solutionï¼Œ maxmachine
+	Output: ç”˜ç‰¹å›¾ã€‚

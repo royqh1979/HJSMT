@@ -22,8 +22,8 @@ public class PSO {
 	private int Popsize; //number of particles for iteration.
 	private int num_iterations;
 	/*
-	ע�⣬���������б��У�ÿ������Ϊһ��int[]���飬����һ������ִ��˳����룬���ڰ����й���m*n���������
-	Ԫ��[0]��[m*n-1]Ϊִ��˳����롣Ԫ��[m*n]Ϊ��ִ��˳���µ���С���ʱ��
+	注意，下列粒子列表中，每个粒子为一个int[]数组，代表一个机器执行顺序编码，由于案例中共有m*n个工序，因此
+	元素[0]到[m*n-1]为执行顺序编码。元素[m*n]为该执行顺序下的最小完成时间
 
 	 */
 	private List<int[]> ini_particles; //full of paricles.
@@ -69,7 +69,7 @@ public class PSO {
 	}
 
 	/**
-	 * ��ʼ������Ⱥ
+	 * 初始化粒子群
 	 *
 	 */
 	public void Initialization(){
@@ -284,21 +284,21 @@ public class PSO {
 		int zerocount ;
 		int[] randomnums;
 		
-		//�Թ���i���г�ʼ����i��ȡֵ��1��m-1����m-1��,�������еĹ��������һ�������ĸ�ֵ������
+		//对工作i进行初始化，i的取值从1到m-1，共m-1个,代表所有的工作。最后一个工作的赋值在下面
 		for(int i=0; i<m; i++){
 			k=0;
 			zerocount=0;
 			
 			/*
-			 * ����ÿ����������Ҫ����n����ͬ������,��������е�����x��ʾ����Jobs�����еĵ�x��0ʵ��ת�䡣
-			 * Ȼ����Ҫ�Ը������е�Ԫ�ؽ��б������Ա��Jobs�е�Ԫ�ؽ��и�ֵ��
-			 * ���ɵ�����������ֵӦ����m*n,m*n-1,m*n-2,...,n��
+			 * 对于每个工作而言要产生n个相同的数字,这个数组中的数字x表示，在Jobs数组中的第x个0实现转变。
+			 * 然后需要对该数组中的元素进行遍历，以便对Jobs中的元素进行赋值。
+			 * 生成的随机数的最大值应该是m*n,m*n-1,m*n-2,...,n。
 			 */
 			randomnums = getRandomnums(1,m*n-(i-1)*n,n);
 			
 			for(int j=0; j<p.length; j++){
 				if(p[j]==0){
-					zerocount++;   //�����ڼ�����
+					zerocount++;   //代表第几个零
 					if(zerocount==randomnums[k]){
 						p[j]=i;
 						k++;
@@ -310,7 +310,7 @@ public class PSO {
 			}
 		}
 		
-		//�������һ��������
+		//对于最后一个工作：
 		for(int t=0; t<m*n; t++){
 			if(p[t]==0){
 				p[t]=m;
@@ -334,16 +334,16 @@ public class PSO {
 		
 		for(int i=0; i<n;){  
 			state = true;  
-			int num = (int) (Math.random()*(max-min))+min;//�������һ��[min,max]��Χ�ڵ�����
+			int num = (int) (Math.random()*(max-min))+min;//随机生成一个[min,max]范围内的数字
 			for(int j=0;j<i;j++){            
-				if(num==result[j]){//�����ɵ�����������֮ǰ���ڵ�Ԫ��һһ�Ƚ�,������ظ�
-					state=false;   //��������ظ���Ԫ�ؼ��뵽�����С�
-					break;         //Ȼ��������������һ��ѭ�����ٴ������µ�����
+				if(num==result[j]){//把生成的数字与数组之前存在的元素一一比较,如果有重复
+					state=false;   //不把这个重复的元素加入到数组中。
+					break;         //然后跳出，进入下一次循环，再次生成新的数字
 				}
 			}
-			if(state){  //���û���ظ�
+			if(state){  //如果没有重复
 				result[i]=num;
-				i++;     //ֱ������һ����ͬ��Ԫ�أ����Ѹ�Ԫ�ؼ��뵽�����в��������һ��ѭ����
+				i++;     //直到生成一个不同的元素，并把该元素加入到数组中才算进入下一个循环。
 			}
 		}
 		
@@ -352,7 +352,7 @@ public class PSO {
 	
 	//algorithm for ranking from small to big.
 	private int[] arrange(int[] array) {
-		// TODO �Զ����ɵķ������
+		// TODO 自动生成的方法存根
 		int mid;
 		for(int i=0; i<array.length-1; i++){
 			for(int j=i+1;j<array.length;j++){
