@@ -1,100 +1,52 @@
-package HJSMT.PSO_LS_MT;
+package net.royqh.HJSMT.DrawGranttChart;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
+import java.awt.Graphics;
+import java.awt.Point;
 
-public class LS implements Callable<List<int[]>> {
-
-	private List<int[]> list;
-	private List<int[]> resultList;
-	
-	private int max_neighbors;
-	
+public class Painter {
+	//basic information
 	private String[][] worktable;
 	private int[][] timetable;
 	private int maxmachine;
+	private int[] solution;
 	private int m;
 	private int n;
-	
+	//for evaluating
 	private int[][] ResourceMap;
 	private int[] Current;
 	
-	//basic information
-	public LS(String[][] worktable, int[][] timetable, int maxmachine, List<int[]> list, int max_neighbors){
+	private int height;
+	private int X_ori;
+	private int Y_ori;
+	
+	
+	public Painter(String[][] worktable,int[][] timetable,int maxmachine,int[] solution, Point point, int height){
+		
 		this.worktable = worktable;
 		this.timetable = timetable;
 		this.maxmachine = maxmachine;
+		this.solution = solution;
+		this.height = height;
 		m = worktable.length;
 		n = worktable[0].length;
-		this.list = list;
-		this.max_neighbors = max_neighbors;
-		resultList = new ArrayList<int[]>();
+		
+		X_ori = point.x;
+		Y_ori = point.y;
+	};
+	
+	public int paintGranttChart(Graphics g){
+		
+		return evaluate_2(solution, g);
 	}
 
-	
-	@Override
-	public List<int[]> call() {
-		
-		int[] temp;
-		
-		for(int i=0; i<list.size(); i++){
-			
-			temp = Improvement_Method(list.get(i));
-			
-			resultList.add(temp);
-			
-		}
-		
-		return resultList;
-	}
-	
-	private int[] Improvement_Method(int[] s) {
-		// TODO Auto-generated method stub
-		int[] s_neighbor;//with fitness
-		int[] s_local_best = new int[m*n+1];
-		int num=0; //number of iterations.
-		
-		System.arraycopy(s, 0, s_local_best, 0, s.length);;
-		
-		while(num < max_neighbors){
-			s_neighbor = getNeighbor(s_local_best);//Visit one neighbor.
-			
-			if(s_neighbor[m*n] <= s_local_best[m*n]){
-				System.arraycopy(s_neighbor, 0, s_local_best, 0, m*n+1);
-			}
-			num++;
-		}
-		return s_local_best;
-	}
-	
-	private int[] getNeighbor(int[] s) {
-		// TODO Auto-generated method stub
-		int ran1 = (int) (Math.random()*(m*n)); //ran1~[0,m*n-1]
-		int ran2 = (int) (Math.random()*(m*n));
-		int temp;
-		int[] neighbor = new int[m*n+1];//with fitness
-		int[] neighbor1 = new int[m*n]; //without fitness
-		
-		System.arraycopy(s, 0, neighbor1, 0, m*n);
-		
-		//different positions selected.
-		while(neighbor1[ran1]==neighbor1[ran2]){
-			ran2 = (int) (Math.random()*(m*n));
-		}
-		
-		temp = neighbor1[ran1];
-		neighbor1[ran1] = neighbor1[ran2];
-		neighbor1[ran2] = temp;
-		//put fitness into neighbor
-		System.arraycopy(neighbor1, 0, neighbor, 0, m*n);
-		neighbor[m*n] = evaluate_2(neighbor1);
-		
-		return neighbor;
-	}
-	
-	public int evaluate_2(int[] jobs2){
+	//This method has the ability to output a granttchart.
+	public int evaluate_2(int[] jobs2, Graphics g){
 		// TODO 自动生成的方法存根
+		if(jobs2.length == m*n+1){
+			int[] temp = new int[m*n];
+			System.arraycopy(jobs2, 0, temp, 0, m*n);
+			jobs2 = temp;
+		}
 		int row;
 		String demand;
 		int time; //processing time
@@ -117,7 +69,7 @@ public class LS implements Callable<List<int[]>> {
 			operations[row-1]++;
 			demand = worktable[row-1][operations[row-1]-1];
 			time = timetable[row-1][operations[row-1]-1];
-			updatefunction_2(row, demand, time, Current, ResourceMap);
+			updatefunction_2(row, operations[row-1], demand, time, Current, ResourceMap, g);
 		}
 		//取出耗时最长的工作的工作时间即为适应值函数的返回值。
 		int fitness_result = Current[0];
@@ -126,10 +78,11 @@ public class LS implements Callable<List<int[]>> {
 				fitness_result = Current[i];
 			}
 		}
+		System.out.println("Fitness: "+fitness_result);
 		return fitness_result;	
 	}
 	
-	private void updatefunction_2(int row, String demand, int time, int[] current, int[][] resourcemap) {
+	private void updatefunction_2(int row, int col, String demand, int time, int[] current, int[][] resourcemap, Graphics g) {
 		// TODO 自动生成的方法存根
 		int[] demandvector = new int[maxmachine];//一个0-1变量,表示一个工序对机器的使用情况
 		int[] resourcevector = new int[maxmachine];//一个0-1变量,表示机器资源的使用情况
@@ -168,6 +121,18 @@ public class LS implements Callable<List<int[]>> {
 				}
 			}
 		}
+		/*
+		 * Paint the granttchart.
+		 */
+		for(int i=0; i<p_splited.length; i++){
+			
+			int machine = Integer.parseInt(p_splited[i]);
+			int X = X_ori+40+current[row-1] + further;
+			int Y = Y_ori+25*(machine-1);
+			g.drawRect(X, Y, time, height);
+			g.drawString("O" + row +","+col, X + time/2-10, Y+15);
+		}
+
 		ResourceMap = resourcemap;
 		
 		//下面的代码用于更新current[]
@@ -186,5 +151,5 @@ public class LS implements Callable<List<int[]>> {
 		}
 		return result;
 	}
-
+	
 }

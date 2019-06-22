@@ -8,6 +8,7 @@
     <version>1.0</version>
     <name>HJSMT Problem Solvers</name>
     <build>
+        <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

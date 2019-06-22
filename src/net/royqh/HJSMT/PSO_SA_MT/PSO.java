@@ -1,6 +1,7 @@
-package HJSMT.PSO_LS_MT;
+package net.royqh.HJSMT.PSO_SA_MT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,10 +12,7 @@ import java.util.concurrent.Future;
 
 public class PSO {
 	
-	//Basic information.
-	private String[][] worktable;
-	private int[][] timetable;
-	private int maxmachine;
+	private FitnessCalculator fitnessCalculator;
 	private int m; //number of jobs.
 	private int n; //number of operation per job.
 	private String problem_name; //for writer.
@@ -23,16 +21,24 @@ public class PSO {
 	private int size; //number of particles to generate.
 	private int Popsize; //number of particles for iteration.
 	private int num_iterations;
+	/*
+	注意，下列粒子列表中，每个粒子为一个int[]数组，代表一个机器执行顺序编码，由于案例中共有m*n个工序，因此
+	元素[0]到[m*n-1]为执行顺序编码。元素[m*n]为该执行顺序下的最小完成时间
+
+	 */
 	private List<int[]> ini_particles; //full of paricles.
 	private List<int[]> particles; //full of paricles.
 	private List<int[]> p_pbests; //full of best positions found by particles.
-	private int[] gbest; //global best position.
-	private int length_of_gbest = 5;
-	private int[] p_seed; //seed particle.
+	private List<int[]> gbest; //global best position.
 
+	private int length_of_gbest = 20;
+	private int[] p_seed; //seed particle.
 	
-	//LS
-	private int LSIter = 30;
+	//SA
+	private int D;
+	private double T;
+	private double Pr = 0.1;
+	private double cool = 0.95;
 	
 	//for evaluating.
 	private int[][] ResourceMap;
@@ -40,16 +46,14 @@ public class PSO {
 	
 	//for recording
 	private long startTime;
-	
-	
+
+
 	public PSO(String[][] worktable, int[][] timetable, int maxmachine, int Popsize, String problem, int num_iterations){
-		this.worktable = worktable;
-		this.timetable = timetable;
-		this.maxmachine = maxmachine;
+		fitnessCalculator=new FitnessCalculator(worktable,timetable,maxmachine);
 		m = worktable.length;
 		n = worktable[0].length;
 		this.Popsize = Popsize;
-		size = 100;
+		size = Popsize*100;
 		
 		this.problem_name = problem;
 		
@@ -58,11 +62,16 @@ public class PSO {
 		
 		ini_particles = new ArrayList<int[]>();
 		particles = new ArrayList<int[]>();
-		p_pbests = new ArrayList<int[]>();;
+		p_pbests = new ArrayList<int[]>();
+		gbest = new ArrayList<int[]>();
 		
 		startTime = System.currentTimeMillis();
 	}
-	
+
+	/**
+	 * 初始化粒子群
+	 *
+	 */
 	public void Initialization(){
 		System.out.println("PSO procedure is initialzing....");
 		
@@ -81,6 +90,7 @@ public class PSO {
 				return o1[m*n]-o2[m*n];
 			}
 		});
+
 		for(int i=0; i<Popsize; i++){
 			particles.add(ini_particles.get(i));
 		}
@@ -92,8 +102,16 @@ public class PSO {
 		}
 		
 		//4. Initialize gbest.
-
-		gbest = p_pbests.get(0);
+		for(int i=0; i<length_of_gbest; i++){
+			int[] temp = new int[m*n+1];
+			System.arraycopy(p_pbests.get(i), 0, temp, 0, m*n+1);
+			gbest.add(temp);
+		}
+		
+		
+		//for SA
+		D = ini_particles.get(ini_particles.size()-1)[m*n] - ini_particles.get(0)[m*n] ;
+		T = -D/Math.log(Pr);//T = -(Cw-Cb)/(ln Pr)
 		
 	}
 	
@@ -109,10 +127,14 @@ public class PSO {
 		
 		while((iteration++)<num_iterations){
 			
-			System.out.println(iteration+"-th iteration:");
-			System.out.println("Best solution's fitness: "+ gbest[m*n]);
-			System.out.println("Elapse time: "+ (System.currentTimeMillis()-startTime)/1000+"s");
-			System.out.println();
+//			System.out.println(iteration+"-th iteration:");
+//			System.out.println("Solution 1 fitness: "+ gbest.get(0)[m*n]);
+//			System.out.println("Solution 2 fitness: "+ gbest.get(1)[m*n]);
+//			System.out.println("Solution 3 fitness: "+ gbest.get(2)[m*n]);
+//			System.out.println("Solution 4 fitness: "+ gbest.get(3)[m*n]);
+//			System.out.println("Solution 5 fitness: "+ gbest.get(4)[m*n]);
+//			System.out.println("T = "+new DecimalFormat("0.00").format(T)+"\u2103. Elapse time: "+ (System.currentTimeMillis()-startTime)/1000+"s");
+//			System.out.println();
 			
 			//1. PSO process
 			ExecutorService esor1 = Executors.newFixedThreadPool(5);
@@ -125,7 +147,7 @@ public class PSO {
 					list.add(particles.get(j));
 				}
 				
-				FutureList.add(esor1.submit(new PSOProcess(worktable, timetable, maxmachine, gbest, list)));
+				FutureList.add(esor1.submit(new PSOProcess(fitnessCalculator,m,n, gbest.get(0), list)));
 			}
 			//update particles
 			particles.clear();
@@ -140,35 +162,6 @@ public class PSO {
 			}
 			esor1.shutdown();
 			
-			
-			//2.LS
-			ExecutorService esor_LS = Executors.newFixedThreadPool(5);
-			List<Future<List<int[]>>> FutureList_LS = new ArrayList<Future<List<int[]>>>();
-			for(int i=0; i<5; i++){
-
-				List<int[]> list = new ArrayList<int[]>();
-				for(int j=particles_per_Thread*i; j<particles_per_Thread*i+particles_per_Thread; j++){
-
-					list.add(particles.get(j));
-				}
-				
-				FutureList_LS.add(esor_LS.submit(new LS(worktable, timetable, maxmachine, list, LSIter)));
-			}
-			//update particles
-			particles.clear();
-			for(int i=0; i<5; i++){
-				
-				List<int[]> list = new ArrayList<int[]>();
-				list = FutureList_LS.get(i).get();
-				
-				for(int j=0; j<list.size(); j++){
-					particles.add(list.get(i));
-				}	
-			}
-			esor_LS.shutdown();
-			
-			
-			
 			//update pbest
 			for(int i=0; i<Popsize; i++){
 				
@@ -179,18 +172,37 @@ public class PSO {
 			
 			//update gbest
 			for(int i=0; i<Popsize; i++){
-				if(p_pbests.get(i)[m*n]<=gbest[m*n]){
-					gbest = p_pbests.get(i);
+				if(p_pbests.get(i)[m*n] < gbest.get(length_of_gbest-1)[m*n]){
+					
+					boolean ifDup = false;
+					//if there is a duplication particle
+					for(int j=0; j<length_of_gbest; j++){
+						if(Arrays.equals(p_pbests.get(i), gbest.get(j))){
+							ifDup = true;
+							break;
+						}
+					}
+					
+					if(ifDup == false){
+						gbest.add(p_pbests.get(i));
+						Collections.sort(gbest, new Comparator<int[]>(){
+							@Override
+							public int compare(int[] o1, int[] o2) {
+								// TODO Auto-generated method stub
+								return o1[m*n]-o2[m*n];
+							}
+						});
+						gbest.remove(length_of_gbest);
+					}
 				}
 			}
 
-			/*
+			
 			//2. SA
 			ExecutorService esor_SA = Executors.newFixedThreadPool(5);
 			List<Future<int[]>> FutureList_SA = new ArrayList<Future<int[]>>();
 			for(int i=0; i<length_of_gbest; i++){
-		
-				FutureList_SA.add(esor_SA.submit(new SA(worktable, timetable, maxmachine, T, gbest.get(i))));
+				FutureList_SA.add(esor_SA.submit(new SA(fitnessCalculator,m,n, T, gbest.get(i))));
 			}
 			//update particles
 			gbest.clear();
@@ -208,14 +220,13 @@ public class PSO {
 				}
 			});
 			T = cool * T;
-			*/
-			
+
 			
 		}
 		
 		
 		
-		return gbest;
+		return gbest.get(0);
 		
 	}
 	
@@ -251,7 +262,7 @@ public class PSO {
 			}
 			
 			System.arraycopy(p1, 0, p, 0, m*n);
-			p[m*n] = evaluate_2(p1);
+			p[m*n] = fitnessCalculator.fitness(p1);
 			
 			ini_particles.add(p);
 			pos=0;
@@ -259,108 +270,7 @@ public class PSO {
 	}
 
 	
-	/*
-	 * This method is used to get the fitness from the input permutation(solution)
-	 * input:a permutation(solution) to be evaluated.
-	 * output:fitness.
-	 * This method calls: updatefunction, vectorsMinus.
-	 */
-	public int evaluate_2(int[] jobs2){
-		// TODO 自动生成的方法存根
-		int row;
-		String demand;
-		int time; //processing time
-		/*
-		 * ResourceMap[machine][time].
-		 * element = 0; available machine;
-		 * element = 1; occupied machine;
-		 */
-		ResourceMap = new int[maxmachine][9000]; 
-		/*
-		 * Current[job]: Next operation of the job can start here or after.
-		 */
-		Current = new int[m];
 
-		//找出每个元素对应的已知量：需要 哪几种处理机 和 相应的时间。
-		//operation[j]=i: the (i-1)th operation of job (j-1).
-		int[] operations = new int[m];
-		for(int i=0; i<jobs2.length; i++){
-			row = jobs2[i];   //元素所在矩阵的行，也就是工作的序号。
-			operations[row-1]++;
-			demand = worktable[row-1][operations[row-1]-1];
-			time = timetable[row-1][operations[row-1]-1];
-			updatefunction_2(row, demand, time, Current, ResourceMap);
-		}
-		//取出耗时最长的工作的工作时间即为适应值函数的返回值。
-		int fitness_result = Current[0];
-		for(int i=0; i<Current.length;i++){
-			if(fitness_result<Current[i]){
-				fitness_result = Current[i];
-			}
-		}
-		return fitness_result;	
-	}
-	
-	private void updatefunction_2(int row, String demand, int time, int[] current, int[][] resourcemap) {
-		// TODO 自动生成的方法存根
-		int[] demandvector = new int[maxmachine];//一个0-1变量,表示一个工序对机器的使用情况
-		int[] resourcevector = new int[maxmachine];//一个0-1变量,表示机器资源的使用情况
-		int further=0;//若不满足条件，向后推迟的次数
-		int count=0;//用于记录连续的次数
-		String[] p_splited;
-		//把机器的占用设成0-1向量：例如(1,0,1,0,0)，表示只占用1和3机器
-		//解析demand,看看需要哪几台机器
-		p_splited = demand.split(";");
-		for(int j=0 ;j<p_splited.length; j++){
-			int index = Integer.parseInt(p_splited[j]);
-			demandvector[index-1]=1;
-		}
-		
-		for(int i=0; count < time; i++){
-			//提取该时刻的机器余量
-			for(int y=0;y<maxmachine;y++){
-				resourcevector[y] = resourcemap[y][current[row-1]+i];
-			}
-			if(vectorsMinus_2(resourcevector,demandvector)){//如果这个时候的余量足够。
-				count++;
-			}else{      //如果某一时刻余量不够，则延长一个单位的搜索范围。
-				if(count!=0){   //不了丢失信息
-					further = count + further;
-				}
-				count=0;//打断连续从新开始计数。
-				further++;
-			}
-		}
-
-		//下面的代码用于更新resourcemap
-		for(int j = current[row-1]+further; j<current[row-1]+further+time; j++){
-			for(int k=0; k<maxmachine; k++){
-				if(demandvector[k]!=0){
-					resourcemap[k][j] = 1;
-				}
-			}
-		}
-		ResourceMap = resourcemap;
-		
-		//下面的代码用于更新current[]
-		current[row-1]= current[row-1]+time+further;
-		Current = current;
-	}
-	
-	private boolean vectorsMinus_2(int[] resourcevector, int[] demandvector) {
-		// TODO Auto-generated method stub
-		boolean result = true;
-		for(int i=0;i<maxmachine;i++){		
-			if(resourcevector[i]==1 && demandvector[i]==1){
-				result = false;
-				break;
-			}
-		}
-		return result;
-	}
-	
-	
-	
 	/*
 	 * SeedGenerator Method is used to generate a seed solution.
 	 * There are m jobs and each job has n operations.

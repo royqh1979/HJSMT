@@ -1,4 +1,4 @@
-package HJSMT.PSO_SA_MT;
+package net.royqh.HJSMT.PSO_SA_MT;
 
 import java.util.ArrayList;
 import java.util.List;

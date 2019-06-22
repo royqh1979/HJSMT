@@ -1,4 +1,4 @@
-package HJSMT.DrawGranttChart;
+package net.royqh.HJSMT.DrawGranttChart;
 
 import java.awt.Color;
 import java.awt.Graphics;

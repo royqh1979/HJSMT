@@ -1,4 +1,4 @@
-package HJSMT.PSO_LS_MT;
+package net.royqh.HJSMT.PSO_LS_MT;
 
 import java.util.concurrent.ExecutionException;
 
